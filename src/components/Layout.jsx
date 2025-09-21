@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Truck, FileText, ShoppingCart, User, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { userStore } from '../store/userStore.js';
 
 export default function Layout({ children }) {
   const navigate = useNavigate();
@@ -9,18 +10,18 @@ export default function Layout({ children }) {
 
   const menuItems = [
     { name: "Dashboard", icon: <Home size={20} />, path: "/dashboard" },
-    { name: "Shipments", icon: <Truck size={20} />, path: "/shipments" },
-    { name: "Invoices", icon: <FileText size={20} />, path: "/invoices" },
     { name: "Orders", icon: <ShoppingCart size={20} />, path: "/orders" },
     { name: "Profile", icon: <User size={20} />, path: "/profile" },
   ];
 
   const handleLogout = () => {
-    navigate("/login");
+    // Clear user data and redirect to login
+    userStore.clearUser();
+    navigate("/login", { replace: true });
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F9FAFB]">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-72 bg-white border-r border-gray-200 flex-col shadow-sm">
         <div className="p-8 border-b border-gray-100">
