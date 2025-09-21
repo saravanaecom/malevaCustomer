@@ -5,18 +5,37 @@ import { customerService } from '../services/customerService.js';
 import LoadingSpinner from '../components/LoadingSpinner.jsx';
 
 export default function Profile() {
-  const { customerId, companyId } = useUser();
+  const { customerId, companyId, user, isAuthenticated } = useUser();
   const [customerData, setCustomerData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Debug user state on component mount
+  useEffect(() => {
+    console.log('Profile Component - User State:', {
+      user,
+      isAuthenticated,
+      customerId,
+      companyId,
+      localStorage_user: localStorage.getItem('user'),
+      localStorage_auth: localStorage.getItem('isAuthenticated')
+    });
+  }, []);
 
   useEffect(() => {
     fetchCustomerDetails();
   }, [customerId, companyId]);
 
   const fetchCustomerDetails = async () => {
+    // Debug user data
+    console.log('Profile Debug - User data:', { customerId, companyId });
+    console.log('Profile Debug - localStorage user:', localStorage.getItem('user'));
+    console.log('Profile Debug - localStorage auth:', localStorage.getItem('isAuthenticated'));
+    
     if (!customerId || !companyId) {
-      setError('Customer ID or Company ID not available');
+      const errorMsg = `Missing data - Customer ID: ${customerId}, Company ID: ${companyId}`;
+      console.error('Profile Error:', errorMsg);
+      setError(errorMsg);
       setLoading(false);
       return;
     }
@@ -33,11 +52,14 @@ export default function Profile() {
         setCustomerData(result.Data1[0]);
         console.log('Customer data set:', result.Data1[0]);
       } else {
-        setError('Customer details not found');
+        const errorMsg = `API returned: IsSuccess=${result.IsSuccess}, Data1 length=${result.Data1?.length || 0}`;
+        console.error('Profile API Error:', errorMsg);
+        setError(errorMsg);
       }
     } catch (err) {
-      setError(`Failed to fetch customer details: ${err.message}`);
-      console.error('Error fetching customer details:', err);
+      const errorMsg = `API Error: ${err.message} - Status: ${err.response?.status || 'Unknown'}`;
+      console.error('Profile Network Error:', err);
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -58,18 +80,26 @@ export default function Profile() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg p-8 shadow-sm border text-center max-w-sm w-full">
+        <div className="bg-white rounded-lg p-8 shadow-sm border text-center max-w-md w-full">
           <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <X className="w-6 h-6 text-red-600" />
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Profile</h2>
-          <p className="text-gray-600 text-sm mb-4">{error}</p>
-          <button 
-            onClick={fetchCustomerDetails}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-          >
-            Try Again
-          </button>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Profile Error</h2>
+          <p className="text-gray-600 text-sm mb-4 break-words">{error}</p>
+          <div className="space-y-2">
+            <button 
+              onClick={fetchCustomerDetails}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition-colors w-full"
+            >
+              Try Again
+            </button>
+            <button 
+              onClick={() => window.location.href = '/login'}
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors w-full"
+            >
+              Back to Login
+            </button>
+          </div>
         </div>
       </div>
     );

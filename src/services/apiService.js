@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://103.215.139.8:8001/api';
+import { ServerURL } from '../config/serverConfig.js';
 
 export const apiRequest = async (endpoint, method = 'GET', data = null) => {
   const token = localStorage.getItem('authToken');
@@ -18,10 +18,11 @@ export const apiRequest = async (endpoint, method = 'GET', data = null) => {
   }
 
   try {
-    console.log('Making API request to:', `${API_BASE_URL}${endpoint}`);
+    const apiUrl = `${ServerURL.PRODUCTION_HOST_URL}api${endpoint}`;
+    console.log('Making API request to:', apiUrl);
     console.log('Request config:', config);
     
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    const response = await fetch(apiUrl, config);
     
     console.log('Response status:', response.status);
     console.log('Response headers:', response.headers);
