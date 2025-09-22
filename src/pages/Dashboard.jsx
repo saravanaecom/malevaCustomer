@@ -3,12 +3,14 @@ import { Truck, FileText, ShoppingCart, TrendingUp, Package, DollarSign, Clock, 
 import { useUser } from "../hooks/useUser.js";
 import { useOrders } from "../hooks/useOrders.js";
 import { useState, useEffect } from "react";
+import Processing from "./Processing.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, customerId,  username } = useUser();
   const { orders: apiOrders, loading } = useOrders();
   const [animatedStats, setAnimatedStats] = useState({ total: 0, completed: 0, processing: 0, cancelled: 0 });
+  const [showProcessing, setShowProcessing] = useState(false);
 
   // Transform API data
   const transformApiOrders = (apiData) => {
@@ -77,8 +79,23 @@ export default function Dashboard() {
     .sort(([,a], [,b]) => b - a)
     .slice(0, 3);
 
+  // Show Processing page if requested
+  if (showProcessing) {
+    return <Processing onBack={() => setShowProcessing(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
+      {/* Global Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 shadow-2xl flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+            <p className="text-gray-700 font-medium">Loading dashboard data...</p>
+          </div>
+        </div>
+      )}
+      
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* Header */}
         <div className="mb-6 sm:mb-10 animate-fade-in-up">
@@ -145,7 +162,7 @@ export default function Dashboard() {
 
           {/* Processing Orders */}
           <div className="bg-white p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer group animate-fade-in-up" 
-               onClick={() => navigate('/orders')} style={{animationDelay: '0.3s'}}>
+               onClick={() => setShowProcessing(true)} style={{animationDelay: '0.3s'}}>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div className="mb-2 sm:mb-0">
                 <p className="text-xs sm:text-sm font-medium text-[#6B7280] mb-1 sm:mb-2">Processing</p>

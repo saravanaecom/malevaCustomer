@@ -4,9 +4,8 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 
 import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
-
-
 import Orders from '../pages/Orders';
+import Processing from '../pages/Processing';
 import Profile from '../pages/Profile';
 import NotFound from '../pages/NotFound';
 import Layout from '../components/Layout';
@@ -26,6 +25,7 @@ const AppRoutes = () => {
         
        
         <Route path="/orders" element={<ProtectedRoute><Layout><Orders /></Layout></ProtectedRoute>} />
+        <Route path="/processing" element={<ProtectedRoute><Processing /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
         <Route path="/dev/logs" element={<ProtectedRoute><Layout><LogViewer /></Layout></ProtectedRoute>} />
         

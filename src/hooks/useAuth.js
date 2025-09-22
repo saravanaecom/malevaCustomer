@@ -31,14 +31,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (credentials) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await authService.login(credentials);
       setUser(response.user);
       setIsAuthenticated(true);
       return response;
-    } catch (error) {
-      throw error;
     } finally {
       setLoading(false);
     }
@@ -49,10 +47,9 @@ export const AuthProvider = ({ children }) => {
       await authService.logout();
     } catch (error) {
       console.error('Logout error:', error);
-    } finally {
-      setUser(null);
-      setIsAuthenticated(false);
     }
+    setUser(null);
+    setIsAuthenticated(false);
   };
 
   const value = {

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Truck, FileText, ShoppingCart, User, LogOut, Menu, X } from 'lucide-react';
+import { Home, Truck, FileText, ShoppingCart, User, LogOut, Menu, X, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { userStore } from '../store/userStore.js';
 
@@ -11,6 +11,7 @@ export default function Layout({ children }) {
   const menuItems = [
     { name: "Dashboard", icon: <Home size={20} />, path: "/dashboard" },
     { name: "Orders", icon: <ShoppingCart size={20} />, path: "/orders" },
+    { name: "Processing Orders", icon: <Clock size={20} />, path: "/processing" },
     { name: "Profile", icon: <User size={20} />, path: "/profile" },
   ];
 
@@ -19,6 +20,8 @@ export default function Layout({ children }) {
     userStore.clearUser();
     navigate("/login", { replace: true });
   };
+
+
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -37,7 +40,7 @@ export default function Layout({ children }) {
         <nav className="flex-1 px-6 py-8">
           {menuItems.map((item) => (
             <button
-              key={item.path}
+              key={item.path || item.name}
               onClick={() => navigate(item.path)}
               className={`flex items-center w-full px-4 py-4 mb-2 text-left rounded-xl transition-all duration-200 ${
                 location.pathname === item.path 
@@ -88,7 +91,7 @@ export default function Layout({ children }) {
           <div className="bg-white border-t border-gray-100">
             {menuItems.map((item) => (
               <button
-                key={item.path}
+                key={item.path || item.name}
                 onClick={() => {
                   navigate(item.path);
                   setIsMobileMenuOpen(false);

@@ -3,12 +3,17 @@ import { useOrders } from "../hooks/useOrders.js";
 import { useUser } from "../hooks/useUser.js";
 import { useState } from "react";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
+import ImagePreview from "../components/ImagePreview.jsx";
+import ImageGallery from "./ImageGallery.jsx";
+import Processing from "./Processing.jsx";
 
 export default function Orders() {
   const { username, customerId } = useUser();
   const { orders: apiOrders, loading, error, refetch } = useOrders();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showImageGallery, setShowImageGallery] = useState(false);
+  const [showProcessing, setShowProcessing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const itemsPerPage = 20;
@@ -157,20 +162,29 @@ export default function Orders() {
   //   return sum + (order.netAmount || 0);
   // }, 0);
 
+  // Show image gallery if requested
+  if (showImageGallery) {
+    return <ImageGallery onBack={() => setShowImageGallery(false)} />;
+  }
+
+  // Show processing page if requested
+  if (showProcessing) {
+    return <Processing onBack={() => setShowProcessing(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 animate-gradient-x">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
-        <div className="mb-6 md:mb-8 animate-fade-in-up">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#1F2937] mb-2 animate-slide-in-left">Orders</h1>
-          <p className="text-sm md:text-base text-[#6B7280] animate-slide-in-right">Track and manage your orders</p>
-          {customerId && (
-            <p className="text-sm text-[#6B7280] mt-1">
-              Showing orders for: {username} (Customer ID: {customerId})
-            </p>
-          )}
-          {loading && (
-            <p className="text-sm text-blue-600 mt-1">Loading your orders...</p>
-          )}
+        <div className="mb-4">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
+            <div className="p-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg mr-2">
+              <ShoppingCart className="w-5 h-5 text-white" />
+            </div>
+            All Orders
+          </h1>
+          <p className="text-sm text-gray-600 mt-1">
+            {allOrders.length} total orders
+          </p>
           {error && (
             <div className="mt-2 flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 text-red-600" />
@@ -273,7 +287,8 @@ export default function Orders() {
             </div>
           </div>
 
-          <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in-up cursor-pointer" 
+               onClick={() => setShowProcessing(true)} style={{animationDelay: '0.3s'}}>
             <div className="flex flex-col md:flex-row md:items-center">
               <div className="p-2 md:p-3 bg-gradient-to-br from-[#F59E0B]/10 to-[#F59E0B]/20 rounded-lg mb-2 md:mb-0 self-start animate-pulse-slow">
                 <Clock className="h-5 w-5 md:h-6 md:w-6 text-[#F59E0B] animate-spin-slow" />
@@ -397,6 +412,15 @@ export default function Orders() {
                       </div>
                       <p className="text-sm font-semibold text-orange-800">{order.cargoDetails}</p>
                     </div>
+                    
+                    {/* Image Preview */}
+                    <div className="flex justify-center pt-2">
+                      <ImagePreview 
+                        orderId={order.id} 
+                        className="w-full justify-center" 
+                        onViewImages={() => setShowImageGallery(true)}
+                      />
+                    </div>
                   </div>
                 </div>
               ))
@@ -456,52 +480,59 @@ export default function Orders() {
               </p>
             </div>
             
-            <div className="overflow-x-auto">
+            <div className="h-[60vh] overflow-y-auto overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-[#F9FAFB] sticky top-0">
+                <thead className="bg-gradient-to-r from-gray-50 to-blue-50 sticky top-0 z-10">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#6B7280] uppercase tracking-wider">Order ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#6B7280] uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#6B7280] uppercase tracking-wider">Job Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#6B7280] uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#6B7280] uppercase tracking-wider">Cargo Details</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#6B7280] uppercase tracking-wider">Route</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#6B7280] uppercase tracking-wider">Delivery Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Order ID</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Customer</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Job Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Cargo Details</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Route</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Delivery Date</th>
+                    <th className="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Image</th>
                   </tr>
                 </thead>
                 <tbody key={`tbody-${statusFilter}-${currentOrders.length}`} className="divide-y divide-gray-100">
                   {currentOrders.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
                         {statusFilter === 'ALL' ? 'No orders found' : `No orders with status "${statusFilter}"`}
                       </td>
                     </tr>
                   ) : (
                     currentOrders.map((order, index) => (
                       <tr key={`${statusFilter}-${order.id}-${index}`} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 cursor-pointer transition-all duration-300 animate-fade-in-up group" onClick={() => openModal(order)} style={{animationDelay: `${index * 0.05}s`}}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1F2937]">
+                        <td className="px-4 py-3 text-sm font-bold text-blue-900">
                           {order.id}
                         </td>
-                        <td className="px-6 py-4 text-sm text-[#1F2937] max-w-xs truncate">
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-800 max-w-xs truncate">
                           {order.customerName || 'N/A'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-700">
                           {order.jobType || 'N/A'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold ${getStatusColor(order.status)}`}>
                             {getStatusIcon(order.status)}
                             <span className="ml-1">{order.status}</span>
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-[#6B7280] max-w-xs truncate">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-700 max-w-xs truncate">
                           {order.cargoDetails}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-700">
                           {order.origin} → {order.destination}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-700">
                           {order.estimatedDelivery || 'N/A'}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <ImagePreview 
+                            orderId={order.id} 
+                            onViewImages={() => setShowImageGallery(true)}
+                          />
                         </td>
                       </tr>
                     ))
@@ -700,6 +731,18 @@ export default function Orders() {
                   )}
                   
 
+                  
+                  {/* Image Preview */}
+                  <div className="flex items-center justify-center p-4 bg-gray-50 rounded-xl">
+                    <ImagePreview 
+                      orderId={selectedOrder.id} 
+                      className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium" 
+                      onViewImages={() => {
+                        closeModal();
+                        setShowImageGallery(true);
+                      }}
+                    />
+                  </div>
                   
                   {/* Vessel Information - Always Show */}
                   <div className="space-y-3">
