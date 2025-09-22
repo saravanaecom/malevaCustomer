@@ -3,7 +3,6 @@ import { useOrders } from "../hooks/useOrders.js";
 import { useUser } from "../hooks/useUser.js";
 import { useState } from "react";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import Layout from "../components/Layout.jsx";
 import ImagePreview from "../components/ImagePreview.jsx";
 import ImageGallery from "./ImageGallery.jsx";
 
@@ -85,8 +84,7 @@ export default function Processing({ onBack }) {
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
         
         {/* Header */}
@@ -366,6 +364,5 @@ export default function Processing({ onBack }) {
         )}
         </div>
       </div>
-    </Layout>
   );
 }
