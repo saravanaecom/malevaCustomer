@@ -59,26 +59,6 @@ export default function Dashboard() {
   // Recent orders for activities
   const recentOrders = orders.slice(0, 5);
 
-  // Top routes
-  const routeStats = orders.reduce((acc, order) => {
-    const route = `${order.origin} → ${order.destination}`;
-    acc[route] = (acc[route] || 0) + 1;
-    return acc;
-  }, {});
-  const topRoutes = Object.entries(routeStats)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 3);
-
-  // Job type distribution
-  const jobTypeStats = orders.reduce((acc, order) => {
-    const jobType = order.jobType || 'Unknown';
-    acc[jobType] = (acc[jobType] || 0) + 1;
-    return acc;
-  }, {});
-  const topJobTypes = Object.entries(jobTypeStats)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 3);
-
   // Show Processing page if requested
   if (showProcessing) {
     return <Processing onBack={() => setShowProcessing(false)} />;
@@ -263,77 +243,6 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
-
-          {/* Analytics & Quick Actions */}
-          <div className="lg:col-span-1 space-y-4 sm:space-y-6">
-            {/* Top Routes */}
-            <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-lg animate-fade-in-up" style={{animationDelay: '0.6s'}}>
-              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100">
-                <h2 className="text-base sm:text-lg font-bold text-[#1F2937] flex items-center">
-                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
-                  Top Routes
-                </h2>
-              </div>
-              <div className="p-4 sm:p-6">
-                {topRoutes.length > 0 ? (
-                  <div className="space-y-3">
-                    {topRoutes.map(([route, count], index) => (
-                      <div key={route} className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-gray-50">
-                        <div className="flex items-center space-x-2 min-w-0 flex-1">
-                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                            index === 0 ? 'bg-green-500' : index === 1 ? 'bg-blue-500' : 'bg-orange-500'
-                          }`}></div>
-                          <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">{route}</span>
-                        </div>
-                        <span className="text-xs sm:text-sm font-bold text-gray-900 ml-2">{count}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-sm">No route data available</p>
-                )}
-              </div>
-            </div>
-
-            {/* Job Types */}
-            <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-lg animate-fade-in-up" style={{animationDelay: '0.7s'}}>
-              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100">
-                <h2 className="text-base sm:text-lg font-bold text-[#1F2937] flex items-center">
-                  <PieChart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-600" />
-                  Job Types
-                </h2>
-              </div>
-              <div className="p-4 sm:p-6">
-                {topJobTypes.length > 0 ? (
-                  <div className="space-y-3">
-                    {topJobTypes.map(([jobType, count]) => (
-                      <div key={jobType} className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-gray-50">
-                        <div className="flex items-center space-x-2 min-w-0 flex-1">
-                          <Truck className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 flex-shrink-0" />
-                          <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">{jobType}</span>
-                        </div>
-                        <span className="text-xs sm:text-sm font-bold text-gray-900 ml-2">{count}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-sm">No job type data available</p>
-                )}
-              </div>
-            </div>
-
-            {/* Quick Action */}
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg animate-fade-in-up" style={{animationDelay: '0.8s'}}>
-              <h3 className="text-base sm:text-lg font-bold mb-2">Need Help?</h3>
-              <p className="text-blue-100 text-xs sm:text-sm mb-3 sm:mb-4">View all your orders and track Orders</p>
-              <button 
-                onClick={() => navigate('/orders')}
-                className="w-full bg-white text-blue-600 py-2 px-3 sm:px-4 rounded-lg sm:rounded-xl text-sm font-medium hover:bg-blue-50 transition-colors flex items-center justify-center"
-              >
-                Go to Orders <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2" />
-              </button>
             </div>
           </div>
         </div>

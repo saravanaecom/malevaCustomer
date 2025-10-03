@@ -198,8 +198,8 @@ export default function Processing({ onBack }) {
                     {/* Compact Info */}
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between text-xs">
-                        <span className="text-gray-600">Job:</span>
-                        <span className="font-medium">{order.jobType || 'N/A'}</span>
+                        <span className="text-gray-600">Cargo Name</span>
+                        <span className="font-medium">{order.loadingVessel ||'N/A'}</span>
                       </div>
                       <div className="flex justify-between text-xs">
                         <span className="text-gray-600">Route:</span>
@@ -270,12 +270,12 @@ export default function Processing({ onBack }) {
               <table className="w-full">
                 <thead className="bg-gradient-to-r from-gray-50 to-blue-50 sticky top-0 z-10">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Order ID</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Customer</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Cargo Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Air Way Bill NUmber</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Job Type</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Route</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Delivery Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Cargo Details</th>
+        
                     <th className="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Image</th>
                   </tr>
                 </thead>
@@ -292,8 +292,8 @@ export default function Processing({ onBack }) {
                   ) : (
                     currentOrders.map((order, index) => (
                       <tr key={`${statusFilter}-${order.id}-${index}`} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
-                        <td className="px-4 py-3 text-sm font-bold text-blue-900">{order.id}</td>
-                        <td className="px-4 py-3 text-sm font-semibold text-gray-800">{order.customerName}</td>
+                        <td className="px-4 py-3 text-sm font-bold text-blue-900">{order.loadingVessel}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-800">{order.awbNo}</td>
                         <td className="px-4 py-3 text-sm font-medium text-gray-700">{order.jobType}</td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold ${getStatusColor(order.status)}`}>
@@ -301,8 +301,10 @@ export default function Processing({ onBack }) {
                             {order.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm font-medium text-gray-700">{order.origin} → {order.destination}</td>
-                        <td className="px-4 py-3 text-sm font-medium text-gray-700">{order.deliveryDate}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-gray-700 max-w-xs truncate">
+                          {order.Quantity}  - {order.totalweight}
+                        </td>
+                       
                         <td className="px-4 py-3 text-center">
                           <ImagePreview 
                             orderId={order.id} 

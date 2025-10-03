@@ -176,7 +176,7 @@ export default function Login() {
         {/* Text */}
         <div className="relative z-10 text-center px-10 animate-fade-in-right">
           <h2 className="text-white text-4xl md:text-5xl font-extrabold mb-4 tracking-wide drop-shadow-lg animate-text-glow">
-            Reliable Shipping & Cargo Management
+           SHIP SPARE IN  TRANSIT
           </h2>
           <p className="text-white/90 text-lg md:text-xl font-medium drop-shadow-md animate-slide-up-delay-2">
             Powered by Maleva

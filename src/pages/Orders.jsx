@@ -6,9 +6,10 @@ import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import ImagePreview from "../components/ImagePreview.jsx";
 import ImageGallery from "./ImageGallery.jsx";
 import Processing from "./Processing.jsx";
-
+import { useNavigate } from "react-router-dom";
 export default function Orders() {
   const { username, customerId } = useUser();
+  const navigate = useNavigate();
   const { orders: apiOrders, loading, error, refetch } = useOrders();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,6 +55,8 @@ export default function Orders() {
         loadingPort: order.LoadingPort || '',
         offPort: order.OffPort || '',
         netAmount: order.ActualNetAmount,
+        Quantity: order.Quantity,
+        totalweight: order.totalweight,
         currency: 'RM',
         items: 1,
         date: order.PickupDate ? new Date(order.PickupDate).toLocaleDateString() : 'N/A'
@@ -141,8 +144,8 @@ export default function Orders() {
     }
   };
 
-  // Stats based on all orders (not filtered)
-  const totalAllOrders = allOrders.length;
+
+
   const completedAllOrders = allOrders.filter(order => {
     const status = order.status?.toUpperCase().trim();
     return status?.includes('COMPLET') || status?.includes('DONE');
@@ -182,9 +185,7 @@ export default function Orders() {
             </div>
             All Orders
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
-            {allOrders.length} total orders
-          </p>
+         
           {error && (
             <div className="mt-2 flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 text-red-600" />
@@ -238,6 +239,7 @@ export default function Orders() {
                   const count = allOrders.filter(order => order.status?.trim() === status).length;
                   return (
                     <option key={status} value={status}>
+
                       📋 {status} ({count})
                     </option>
                   );
@@ -263,17 +265,7 @@ export default function Orders() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-          <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
-            <div className="flex flex-col md:flex-row md:items-center">
-              <div className="p-2 md:p-3 bg-gradient-to-br from-[#0A66C2]/10 to-[#0A66C2]/20 rounded-lg mb-2 md:mb-0 self-start animate-pulse-slow">
-                <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-[#0A66C2] animate-bounce-slow" />
-              </div>
-              <div className="md:ml-4">
-                <p className="text-xs md:text-sm text-[#6B7280]">Total Orders</p>
-                <p className="text-xl md:text-2xl font-bold text-[#1F2937] animate-count-up">{totalAllOrders}</p>
-              </div>
-            </div>
-          </div>
+        
           
           <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
             <div className="flex flex-col md:flex-row md:items-center">
@@ -288,7 +280,7 @@ export default function Orders() {
           </div>
 
           <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in-up cursor-pointer" 
-               onClick={() => setShowProcessing(true)} style={{animationDelay: '0.3s'}}>
+              onClick={() => navigate('/processing')}>
             <div className="flex flex-col md:flex-row md:items-center">
               <div className="p-2 md:p-3 bg-gradient-to-br from-[#F59E0B]/10 to-[#F59E0B]/20 rounded-lg mb-2 md:mb-0 self-start animate-pulse-slow">
                 <Clock className="h-5 w-5 md:h-6 md:w-6 text-[#F59E0B] animate-spin-slow" />
@@ -484,13 +476,12 @@ export default function Orders() {
               <table className="w-full">
                 <thead className="bg-gradient-to-r from-gray-50 to-blue-50 sticky top-0 z-10">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Order ID</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Customer</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"> Cargo Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Air Way Bill NUmber</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Job Type</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Cargo Details</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Route</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Delivery Date</th>
+                    
                     <th className="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Image</th>
                   </tr>
                 </thead>
@@ -503,12 +494,12 @@ export default function Orders() {
                     </tr>
                   ) : (
                     currentOrders.map((order, index) => (
-                      <tr key={`${statusFilter}-${order.id}-${index}`} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 cursor-pointer transition-all duration-300 animate-fade-in-up group" onClick={() => openModal(order)} style={{animationDelay: `${index * 0.05}s`}}>
+                      <tr key={`${statusFilter}-${order.id}-${index}`} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 cursor-pointer transition-all duration-300 animate-fade-in-up group" >
                         <td className="px-4 py-3 text-sm font-bold text-blue-900">
-                          {order.id}
+                          {order.loadingVessel}
                         </td>
                         <td className="px-4 py-3 text-sm font-semibold text-gray-800 max-w-xs truncate">
-                          {order.customerName || 'N/A'}
+                          {order.awbNo || 'N/A'}
                         </td>
                         <td className="px-4 py-3 text-sm font-medium text-gray-700">
                           {order.jobType || 'N/A'}
@@ -520,14 +511,9 @@ export default function Orders() {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-sm font-medium text-gray-700 max-w-xs truncate">
-                          {order.cargoDetails}
+                          {order.Quantity}  - {order.totalweight}
                         </td>
-                        <td className="px-4 py-3 text-sm font-medium text-gray-700">
-                          {order.origin} → {order.destination}
-                        </td>
-                        <td className="px-4 py-3 text-sm font-medium text-gray-700">
-                          {order.estimatedDelivery || 'N/A'}
-                        </td>
+                        
                         <td className="px-4 py-3 text-center">
                           <ImagePreview 
                             orderId={order.id} 

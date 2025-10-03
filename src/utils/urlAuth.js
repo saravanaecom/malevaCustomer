@@ -12,7 +12,7 @@ export const extractCredentialsFromUrl = () => {
 
 export const shouldAutoLogin = () => {
   // Auto-login for dashboard URL without credentials
-  return window.location.pathname === '/dashboard';
+  return window.location.pathname === '/orders';
 };
 
 export const getDefaultCredentials = () => {

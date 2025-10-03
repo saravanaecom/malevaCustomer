@@ -9,9 +9,8 @@ export default function Layout({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { name: "Dashboard", icon: <Home size={20} />, path: "/dashboard" },
-    { name: "Orders", icon: <ShoppingCart size={20} />, path: "/orders" },
-    { name: "Processing Orders", icon: <Clock size={20} />, path: "/processing" },
+    { name: "Dashboard", icon: <Home size={20} />, path: "/dashboard" }, 
+   
     { name: "Profile", icon: <User size={20} />, path: "/profile" },
   ];
 
